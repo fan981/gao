@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 彩色灯光模拟器</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #222;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .control-panel {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #startBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #stopBtn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .light-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
+            transition: all 0.5s ease-in-out;
+            opacity: 0.8;
+        }
+
+        .light.active {
+            opacity: 1;
+            box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.9);
+            transform: scale(1.1);
+        }
+
+        .light:nth-child(1) { background-color: #FF5252; }
+        .light:nth-child(2) { background-color: #FFD740; }
+        .light:nth-child(3) { background-color: #69F0AE; }
+        .light:nth-child(4) { background-color: #40C4FF; }
+        .light:nth-child(5) { background-color: #E040FB; }
+        .light:nth-child(6) { background-color: #FF4081; }
+        .light:nth-child(7) { background-color: #FFFF00; }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <button id="startBtn">启动</button>
+        <button id="stopBtn">停止</button>
+    </div>
+
+    <div class="light-container">
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+    </div>
+
+    <script>
+        const lights = document.querySelectorAll('.light');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        let animationInterval;
+        let currentIndex = 0;
+
+        function startAnimation() {
+            if (animationInterval) return;
+            
+            const colors = [
+                '#FF5252', '#FFD740', '#69F0AE', 
+                '#40C4FF', '#E040FB', '#FF4081', 
+                '#FFFF00'
+            ];
+            
+            const shuffledColors = [...colors].sort(() => Math.random() - 0.5);
+            
+            lights.forEach((light, index) => {
+                light.style.backgroundColor = shuffledColors[index];
+            });
+            
+            animationInterval = setInterval(() => {
+                lights.forEach(light => {
+                    light.classList.remove('active');
+                });
+                
+                lights[currentIndex].classList.add('active');
+                
+                const currentColor = lights[currentIndex].style.backgroundColor;
+                const colorOptions = shuffledColors.filter(color => color !== currentColor);
+                const newColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+                lights[currentIndex].style.backgroundColor = newColor;
+                
+                currentIndex = (currentIndex + 1) % lights.length;
+            }, 300);
+        }
+
+        function stopAnimation() {
+            clearInterval(animationInterval);
+            animationInterval = null;
+            
+            lights.forEach(light => {
+                light.classList.remove('active');
+            });
+        }
+
+        startBtn.addEventListener('click', startAnimation);
+        stopBtn.addEventListener('click', stopAnimation);
+    </script>
+</body>
+</html>
